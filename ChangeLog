@@ -1,0 +1,10 @@
+2015-09-22  Natalia Portillo  <claunia@claunia.com>
+
+	* Program.cs:
+	* .gitignore:
+	* Subchannel.cs:
+	* SubChannelDecoder.sln:
+	* SubChannelDecoder.csproj:
+	* Properties/AssemblyInfo.cs:
+	  Added initial version.
+
