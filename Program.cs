@@ -39,12 +39,15 @@ namespace SubChannelDecoder
 
         static readonly char[] ISRCTable =
             {
-            '0', '1', '2', '3', '4', '5',
-            '6', '7', '8', '9', 'A', 'B',
-            'C', 'D', 'E', 'F', 'G', 'H',
-            'I', 'J', 'K', 'L', 'M', 'N',
-            'O', 'P', 'Q', 'R', 'S', 'T',
-            'U', 'V', 'W', 'X', 'Y', 'Z'
+            '0', '1', '2', '3', '4',
+            '5', '6', '7', '8', '9',
+            ' ', ' ', ' ', ' ', ' ',
+            ' ', ' ', 'A', 'B', 'C',
+            'D', 'E', 'F', 'G', 'H',
+            'I', 'J', 'K', 'L', 'M',
+            'N', 'O', 'P', 'Q', 'R',
+            'S', 'T', 'U', 'V', 'W',
+            'X', 'Y', 'Z'
         };
 
         static readonly char[] BCDTable =
@@ -57,7 +60,7 @@ namespace SubChannelDecoder
 
         public static void Main(string[] args)
         {
-            Console.WriteLine("SubChannelDecoder 0.01");
+            Console.WriteLine("SubChannelDecoder 0.02");
             Console.WriteLine("© 2015 Natalia Portillo");
             Console.WriteLine();
 
@@ -213,7 +216,7 @@ namespace SubChannelDecoder
             if ((q[0] & QCopyPermitted) == QCopyPermitted)
                 Console.WriteLine("Track may be copied");
 
-            if ((q[0] & QMode1) == QMode1)
+            if ((q[0] & 0x0F) == QMode1)
             {
                 int hour = 0;
                 int phour = 0;
@@ -421,8 +424,13 @@ namespace SubChannelDecoder
             else
                 Console.WriteLine("Unknown Q Mode {0}", (q[0] & 0x0F));
 
-            UInt16 Qcrc = (ushort)((q[10] << 8) + q[11]);
-            Console.WriteLine("Q CRC = 0x{0:X4}", Qcrc);
+            byte[] QCalculatedCrc;
+            CRC16CCITTContext.Data(q, 10, out QCalculatedCrc);
+
+            if(q[10] != QCalculatedCrc[0] || q[11] != QCalculatedCrc[1])
+                Console.WriteLine("Q CRC = 0x{0:X2}{1:X2} (BAD: Expected 0x{2:X2}{3:X2})", q[10], q[11], QCalculatedCrc[0], QCalculatedCrc[1]);
+            else
+                Console.WriteLine("Q CRC = 0x{0:X2}{1:X2} (OK)", q[10], q[11]);
         }
 
 

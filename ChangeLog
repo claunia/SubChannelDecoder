@@ -1,6 +1,16 @@
 2015-09-22  Natalia Portillo  <claunia@claunia.com>
 
 	* Program.cs:
+	* CRC16CCITTContext.cs:
+	* BigEndianBitConverter.cs:
+	* SubChannelDecoder.csproj:
+	  Added CRC16 calculation.
+	Corrected a bug in Q mode detection.
+	Corrected ISRC character table.
+
+2015-09-22  Natalia Portillo  <claunia@claunia.com>
+
+	* Program.cs:
 	* Subchannel.cs:
 	* SubChannelDecoder.sln:
 	  Code clean up.
