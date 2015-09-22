@@ -1,6 +1,13 @@
 2015-09-22  Natalia Portillo  <claunia@claunia.com>
 
 	* Program.cs:
+	* Subchannel.cs:
+	* SubChannelDecoder.sln:
+	  Code clean up.
+
+2015-09-22  Natalia Portillo  <claunia@claunia.com>
+
+	* Program.cs:
 	* .gitignore:
 	* Subchannel.cs:
 	* SubChannelDecoder.sln:
