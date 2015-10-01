@@ -60,7 +60,7 @@ namespace SubChannelDecoder
 
         public static void Main(string[] args)
         {
-            Console.WriteLine("SubChannelDecoder 0.02");
+            Console.WriteLine("SubChannelDecoder 0.03");
             Console.WriteLine("© 2015 Natalia Portillo");
             Console.WriteLine();
 
@@ -83,6 +83,8 @@ namespace SubChannelDecoder
 
                 if(args.Length == 1)
                 {
+                    bool? interleaved = null;
+
                     int sectors = (int)(fs.Length / 96);
                     for(int sector = 0; sector < sectors; sector++)
                     {
@@ -91,7 +93,21 @@ namespace SubChannelDecoder
                         fs.Seek(sector*96, SeekOrigin.Begin);
                         fs.Read(sectorBytes, 0, 96);
 
-                        Subchannel sub = DeinterleaveSubchannel(sectorBytes);
+                        if(interleaved == null)
+                        {
+                            if(CheckQCRC(DeinterleaveSubchannel(sectorBytes).q))
+                            {
+                                Console.WriteLine("Subchannel is interleaved.");
+                                interleaved = true;
+                            }
+                            else if(CheckQCRC(UnpackSubchannel(sectorBytes).q))
+                            {
+                                Console.WriteLine("Subchannel is not interleaved.");
+                                interleaved = true;
+                            }
+                        }
+
+                        Subchannel sub = UnpackSubchannel(sectorBytes, interleaved);
 
                         Console.WriteLine("Sector {0}", sector);
                         Console.WriteLine("\tP: 0x{0:X2}{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}{10:X2}{11:X2}",
@@ -131,6 +147,8 @@ namespace SubChannelDecoder
                 }
                 else
                 {
+                    bool? interleaved = null;
+
                     int sector;
                     if(!int.TryParse(args[1], out sector))
                     {
@@ -151,7 +169,21 @@ namespace SubChannelDecoder
                     fs.Seek(sector*96, SeekOrigin.Begin);
                     fs.Read(sectorBytes, 0, 96);
 
-                    Subchannel sub = DeinterleaveSubchannel(sectorBytes);
+                    if(interleaved == null)
+                    {
+                        if(CheckQCRC(DeinterleaveSubchannel(sectorBytes).q))
+                        {
+                            Console.WriteLine("Subchannel is interleaved.");
+                            interleaved = true;
+                        }
+                        else if(CheckQCRC(UnpackSubchannel(sectorBytes).q))
+                        {
+                            Console.WriteLine("Subchannel is not interleaved.");
+                            interleaved = true;
+                        }
+                    }
+
+                    Subchannel sub = UnpackSubchannel(sectorBytes, interleaved);
 
                     Console.WriteLine("Sector {0}", sector);
                     Console.WriteLine("\tP: 0x{0:X2}{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}{10:X2}{11:X2}",
@@ -424,17 +456,28 @@ namespace SubChannelDecoder
             else
                 Console.WriteLine("Unknown Q Mode {0}", (q[0] & 0x0F));
 
+            if (CheckQCRC(q))
+                Console.WriteLine("Q CRC = 0x{0:X2}{1:X2} (OK)", q[10], q[11]);
+            else
+                Console.WriteLine("Q CRC = 0x{0:X2}{1:X2} (BAD)", q[10], q[11]);
+        }
+
+        public static bool CheckQCRC(byte[] q)
+        {
             byte[] QCalculatedCrc;
             CRC16CCITTContext.Data(q, 10, out QCalculatedCrc);
 
-            if(q[10] != QCalculatedCrc[0] || q[11] != QCalculatedCrc[1])
-                Console.WriteLine("Q CRC = 0x{0:X2}{1:X2} (BAD: Expected 0x{2:X2}{3:X2})", q[10], q[11], QCalculatedCrc[0], QCalculatedCrc[1]);
-            else
-                Console.WriteLine("Q CRC = 0x{0:X2}{1:X2} (OK)", q[10], q[11]);
+            return q[10] == QCalculatedCrc[0] && q[11] == QCalculatedCrc[1];
         }
 
+        public static Subchannel UnpackSubchannel(byte[] subchannel, bool? interleaved)
+        {
+            if (interleaved == null || interleaved == true)
+                return DeinterleaveSubchannel(subchannel);
+            return UnpackSubchannel(subchannel);
+        }
 
-        public static Subchannel DeinterleaveSubchannel(byte[] subchannel)
+        public static Subchannel UnpackSubchannel(byte[] subchannel)
         {
             Subchannel sub = new Subchannel();
 
@@ -448,6 +491,60 @@ namespace SubChannelDecoder
             Array.Copy(subchannel, 84, sub.w, 0, 12);
 
             return sub;
+        }
+
+        public static Subchannel DeinterleaveSubchannel(byte[] subchannel)
+        {
+            Subchannel sub = new Subchannel();
+
+            for (int i = 0; i < 12; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    sub.p[i] += ShiftRight((byte)(subchannel[j + i * 8] & 0x80), j);
+                    sub.q[i] += ShiftRight((byte)(subchannel[j + i * 8] & 0x40), j-1);
+                    sub.r[i] += ShiftRight((byte)(subchannel[j + i * 8] & 0x20), j-2);
+                    sub.s[i] += ShiftRight((byte)(subchannel[j + i * 8] & 0x10), j-3);
+                    sub.t[i] += ShiftRight((byte)(subchannel[j + i * 8] & 0x8), j-4);
+                    sub.u[i] += ShiftRight((byte)(subchannel[j + i * 8] & 0x4), j-5);
+                    sub.v[i] += ShiftRight((byte)(subchannel[j + i * 8] & 0x2), j-6);
+                    sub.w[i] += ShiftRight((byte)(subchannel[j + i * 8] & 0x1), j-7);
+                }
+            }
+
+            return sub;
+        }
+
+        public static byte[] InterleaveSubchannel(Subchannel sub)
+        {
+            byte[] subchannel = new byte[96];
+
+            for (int i = 0; i < 12; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    subchannel[j + i * 8] += ShiftLeft((byte)(sub.p[i] & (0x80 >> j)), j);
+                    subchannel[j + i * 8] += ShiftLeft((byte)(sub.q[i] & (0x80 >> j)), j-1);
+                    subchannel[j + i * 8] += ShiftLeft((byte)(sub.r[i] & (0x80 >> j)), j-2);
+                    subchannel[j + i * 8] += ShiftLeft((byte)(sub.s[i] & (0x80 >> j)), j-3);
+                    subchannel[j + i * 8] += ShiftLeft((byte)(sub.t[i] & (0x80 >> j)), j-4);
+                    subchannel[j + i * 8] += ShiftLeft((byte)(sub.u[i] & (0x80 >> j)), j-5);
+                    subchannel[j + i * 8] += ShiftLeft((byte)(sub.v[i] & (0x80 >> j)), j-6);
+                    subchannel[j + i * 8] += ShiftLeft((byte)(sub.w[i] & (0x80 >> j)), j-7);
+                }
+            }
+
+            return subchannel;
+        }
+
+        public static byte ShiftRight(byte value, int shifted)
+        {
+            return shifted < 0 ? (byte)(value << Math.Abs(shifted)) : (byte)(value >> shifted);
+        }
+
+        public static byte ShiftLeft(byte value, int shifted)
+        {
+            return shifted < 0 ? (byte)(value >> Math.Abs(shifted)) : (byte)(value << shifted);
         }
 
         public static void Usage()

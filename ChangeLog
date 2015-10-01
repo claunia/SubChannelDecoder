@@ -1,3 +1,9 @@
+2015-10-01  Natalia Portillo  <claunia@claunia.com>
+
+	* Program.cs:
+	  Added code to detect, interleave and deinterleave
+	  subchannels.
+
 2015-09-22  Natalia Portillo  <claunia@claunia.com>
 
 	* Program.cs:
