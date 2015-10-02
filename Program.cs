@@ -105,7 +105,7 @@ namespace SubChannelDecoder
                             else if(CheckQCRC(UnpackSubchannel(sectorBytes).q))
                             {
                                 Console.WriteLine("Subchannel is not interleaved.");
-                                interleaved = true;
+                                interleaved = false;
                             }
                         }
 
@@ -335,7 +335,7 @@ namespace SubChannelDecoder
                         else if(CheckQCRC(UnpackSubchannel(sectorBytes).q))
                         {
                             Console.WriteLine("Subchannel is not interleaved.");
-                            interleaved = true;
+                            interleaved = false;
                         }
                     }
 
