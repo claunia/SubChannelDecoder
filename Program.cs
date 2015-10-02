@@ -35,6 +35,7 @@ namespace SubChannelDecoder
         const int QMode1 = 0x01;
         const int QMode2 = 0x02;
         const int QMode3 = 0x03;
+        const int QMode4 = 0x04;
         const int QMode5 = 0x05;
 
         static readonly char[] ISRCTable =
@@ -411,6 +412,83 @@ namespace SubChannelDecoder
 
                 Console.WriteLine("ISRC: {0}", new string(isrc));
                 Console.WriteLine("\tAbsolute Frame {0:X2}", q[9]);
+            }
+            else if ((q[0] & 0x0F) == QMode4)
+            {
+                Console.WriteLine("Q Mode 1: CD-Video");
+                if (q[1] == 0x00)
+                {
+                    Console.WriteLine("\tLead-in");
+
+                    Console.WriteLine("\tRelative Address {0:X2}:{1:X2}:{2:X2}", q[3], q[4], q[5]);
+
+                    switch (q[2])
+                    {
+                        case 0xA0:
+                            {
+                                Console.WriteLine("\tFirst video track is track {0:X2}", q[7]);
+                                switch (q[9])
+                                {
+                                    case 10:
+                                        Console.WriteLine("\tDisc type: {0}", "NTSC video single with stereo sound");
+                                        break;
+                                    case 11:
+                                        Console.WriteLine("\tDisc type: {0}", "NTSC video single with bilingual sound");
+                                        break;
+                                    case 12:
+                                        Console.WriteLine("\tDisc type: {0}", "NTSC LV disc with stereo sound");
+                                        break;
+                                    case 13:
+                                        Console.WriteLine("\tDisc type: {0}", "NTSC LV disc with bilingual sound");
+                                        break;
+                                    case 20:
+                                        Console.WriteLine("\tDisc type: {0}", "PAL video single with stereo sound");
+                                        break;
+                                    case 21:
+                                        Console.WriteLine("\tDisc type: {0}", "PAL video single with bilingual sound");
+                                        break;
+                                    case 22:
+                                        Console.WriteLine("\tDisc type: {0}", "PAL LV disc with stereo sound");
+                                        break;
+                                    case 23:
+                                        Console.WriteLine("\tDisc type: {0}", "PAL LV disc with bilingual sound");
+                                        break;
+                                    default:
+                                        Console.WriteLine("\tUnknown disc type: {0}", q[9]);
+                                        break;
+                                }
+                                break;
+                            }
+                        case 0xA1:
+                            {
+                                Console.WriteLine("\tLast video track is track {0:X2}", q[7]);
+                                break;
+                            }
+                        case 0xA2:
+                            {
+                                Console.WriteLine("\tLead-Out starts at Address {0:X2}:{1:X2}:{2:X2}", q[7], q[8], q[9]);
+                                break;
+                            }
+                        default:
+                            {
+                                Console.WriteLine("\tVideo track {0:X}", q[2]);
+                                Console.WriteLine("\tTrack Starting Address {0:X2}:{1:X2}:{2:X2}", q[7], q[8], q[9]);
+                                break;
+                            }
+                    }
+                }
+                else
+                {
+                    if (q[1] == 0xAA)
+                        Console.WriteLine("\tLead-out");
+                    else
+                        Console.WriteLine("\tTrack {0:X}", q[1]);
+
+                    Console.WriteLine("\tIndex {0:X}", q[2]);
+                    Console.WriteLine("\tRelative Address {0:X2}:{1:X2}:{2:X2}", q[3], q[4], q[5]);
+
+                    Console.WriteLine("\tAbsolute Video Address {0:X2}:{1:X2}:{2:X2}", q[7], q[8], q[9]);
+                }
             }
             else if ((q[0] & 0x0F) == QMode5)
             {

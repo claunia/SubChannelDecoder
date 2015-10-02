@@ -1,5 +1,10 @@
 2015-10-02  Natalia Portillo  <claunia@claunia.com>
 
+	* Program.cs:
+	  Added Q Mode 4 (CD-Video).
+
+2015-10-02  Natalia Portillo  <claunia@claunia.com>
+
 	* CD+G.cs:
 	* Program.cs:
 	* SubChannelDecoder.csproj:
