@@ -1,5 +1,12 @@
 2015-10-02  Natalia Portillo  <claunia@claunia.com>
 
+	* Program.cs:
+	* CD_RW_Subchannel.cs:
+	* CRC16CCITTContext.cs:
+	  Code cleanup
+
+2015-10-02  Natalia Portillo  <claunia@claunia.com>
+
 	* CD_RW_Subchannel.cs:
 	  Changed filename in header.
 

@@ -68,7 +68,7 @@ namespace SubChannelDecoder
             CDLG_Write_Font = 4,
             CDLG_Scroll_Screen = 12
         }
-            
+
         public enum CD_G_Instructions : byte
         {
             CDG_Memory_Preset = 1,
@@ -152,7 +152,7 @@ namespace SubChannelDecoder
             CDEG_Load_Color_Table_Additional_248_255
         }
 
-        static readonly int[] offsets = new []
+        static readonly int[] offsets = 
         { 0, 66, 125, 191, 100, 50, 150, 175,
             8, 33, 58, 83, 108, 133, 158, 183,
             16, 41, 25, 91, 116, 141, 166, 75
@@ -167,7 +167,7 @@ namespace SubChannelDecoder
 
             for (int pack = 0; pack < 4; pack++)
                 for (int column = 0; column < 24; column++)
-                    ms.WriteByte(subchannels[(pack*24)+offsets[column]]);
+                    ms.WriteByte(subchannels[(pack * 24) + offsets[column]]);
 
             ms.Seek(0, System.IO.SeekOrigin.Begin);
             byte[] packetized = ms.ToArray();

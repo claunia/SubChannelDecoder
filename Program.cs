@@ -41,19 +41,19 @@ namespace SubChannelDecoder
 
         static readonly char[] ISRCTable =
             {
-            '0', '1', '2', '3', '4',
-            '5', '6', '7', '8', '9',
-            ' ', ' ', ' ', ' ', ' ',
-            ' ', ' ', 'A', 'B', 'C',
-            'D', 'E', 'F', 'G', 'H',
-            'I', 'J', 'K', 'L', 'M',
-            'N', 'O', 'P', 'Q', 'R',
-            'S', 'T', 'U', 'V', 'W',
-            'X', 'Y', 'Z'
-        };
+                '0', '1', '2', '3', '4',
+                '5', '6', '7', '8', '9',
+                ' ', ' ', ' ', ' ', ' ',
+                ' ', ' ', 'A', 'B', 'C',
+                'D', 'E', 'F', 'G', 'H',
+                'I', 'J', 'K', 'L', 'M',
+                'N', 'O', 'P', 'Q', 'R',
+                'S', 'T', 'U', 'V', 'W',
+                'X', 'Y', 'Z'
+            };
 
         static readonly char[] BCDTable =
-        {
+            {
             '0', '1', '2', '3',
             '4', '5', '6', '7',
             '8', '9', 'A', 'B',
@@ -112,6 +112,7 @@ namespace SubChannelDecoder
                         Subchannel sub = UnpackSubchannel(sectorBytes, interleaved);
 
                         Console.WriteLine("Sector {0}", sector);
+
                         Console.WriteLine("\tP: 0x{0:X2}{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}{10:X2}{11:X2}",
                             sub.p[0], sub.p[1], sub.p[2], sub.p[3], sub.p[4], sub.p[5],
                             sub.p[6], sub.p[7], sub.p[8], sub.p[9], sub.p[10], sub.p[11]);
