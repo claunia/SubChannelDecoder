@@ -2,6 +2,15 @@
 
 	* CD+G.cs:
 	* Program.cs:
+	* CD_RW_Subchannel.cs:
+	* SubChannelDecoder.csproj:
+	  Added support for CD+EG, CD+MIDI, CD Line Graphics and CD
+	  with user data following red book.
+
+2015-10-02  Natalia Portillo  <claunia@claunia.com>
+
+	* CD+G.cs:
+	* Program.cs:
 	  Correct CD+G packetization.
 
 2015-10-02  Natalia Portillo  <claunia@claunia.com>

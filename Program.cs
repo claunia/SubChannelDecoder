@@ -152,12 +152,48 @@ namespace SubChannelDecoder
 
                         if(interleaved == true || interleaved == null)
                         {
-                            if((sectorBytes[0] & 0x3F) == 0x09 ||
-                                (sectorBytes[24] & 0x3F) == 0x09 ||
-                                (sectorBytes[48] & 0x3F) == 0x09 ||
-                                (sectorBytes[72] & 0x3F) == 0x09)
+                            if((sectorBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_G ||
+                                (sectorBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_G ||
+                                (sectorBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_G ||
+                                (sectorBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_G)
                             {
                                 Console.WriteLine("CD+G detected.");
+                                StandardRW = true;
+                            }
+
+                            if((sectorBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_EG ||
+                                (sectorBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_EG ||
+                                (sectorBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_EG ||
+                                (sectorBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_EG)
+                            {
+                                Console.WriteLine("CD+EG detected.");
+                                StandardRW = true;
+                            }
+
+                            if((sectorBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_Line_Graphics ||
+                                (sectorBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_Line_Graphics ||
+                                (sectorBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_Line_Graphics ||
+                                (sectorBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_Line_Graphics)
+                            {
+                                Console.WriteLine("CD with Line Graphics detected.");
+                                StandardRW = true;
+                            }
+                                
+                            if((sectorBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_MIDI ||
+                                (sectorBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_MIDI ||
+                                (sectorBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_MIDI ||
+                                (sectorBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_MIDI)
+                            {
+                                Console.WriteLine("CD with Line Graphics detected.");
+                                StandardRW = true;
+                            }
+
+                            if((sectorBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_User ||
+                                (sectorBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_User ||
+                                (sectorBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_User ||
+                                (sectorBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_User)
+                            {
+                                Console.WriteLine("CD with Line Graphics detected.");
                                 StandardRW = true;
                             }
 
@@ -190,12 +226,48 @@ namespace SubChannelDecoder
                         {
                             byte[] interBytes = InterleaveSubchannel(sub);
 
-                            if((interBytes[0] & 0x3F) == 0x09 ||
-                                (interBytes[24] & 0x3F) == 0x09 ||
-                                (interBytes[48] & 0x3F) == 0x09 ||
-                                (interBytes[72] & 0x3F) == 0x09)
+                            if((interBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_G ||
+                                (interBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_G ||
+                                (interBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_G ||
+                                (interBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_G)
                             {
                                 Console.WriteLine("CD+G detected.");
+                                StandardRW = true;
+                            }
+
+                            if((interBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_EG ||
+                                (interBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_EG ||
+                                (interBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_EG ||
+                                (interBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_EG)
+                            {
+                                Console.WriteLine("CD+EG detected.");
+                                StandardRW = true;
+                            }
+
+                            if((interBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_Line_Graphics ||
+                                (interBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_Line_Graphics ||
+                                (interBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_Line_Graphics ||
+                                (interBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_Line_Graphics)
+                            {
+                                Console.WriteLine("CD with Line Graphics detected.");
+                                StandardRW = true;
+                            }
+
+                            if((interBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_MIDI ||
+                                (interBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_MIDI ||
+                                (interBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_MIDI ||
+                                (interBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_MIDI)
+                            {
+                                Console.WriteLine("CD with Line Graphics detected.");
+                                StandardRW = true;
+                            }
+
+                            if((interBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_User ||
+                                (interBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_User ||
+                                (interBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_User ||
+                                (interBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_User)
+                            {
+                                Console.WriteLine("CD with Line Graphics detected.");
                                 StandardRW = true;
                             }
 
@@ -226,7 +298,7 @@ namespace SubChannelDecoder
                         }
 
                         if(correctlyPacketized)
-                            CD_G.PrintCDGPackets(ms.ToArray());
+                            CD_RW_Subchannel.Print_CD_RW_Packets(ms.ToArray());
                     }
                 }
                 else
@@ -310,12 +382,48 @@ namespace SubChannelDecoder
 
                     if(interleaved == true || interleaved == null)
                     {
-                        if((sectorBytes[0] & 0x3F) == 0x09 ||
-                            (sectorBytes[24] & 0x3F) == 0x09 ||
-                            (sectorBytes[48] & 0x3F) == 0x09 ||
-                            (sectorBytes[72] & 0x3F) == 0x09)
+                        if((sectorBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_G ||
+                            (sectorBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_G ||
+                            (sectorBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_G ||
+                            (sectorBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_G)
                         {
                             Console.WriteLine("CD+G detected.");
+                            StandardRW = true;
+                        }
+
+                        if((sectorBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_EG ||
+                            (sectorBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_EG ||
+                            (sectorBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_EG ||
+                            (sectorBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_EG)
+                        {
+                            Console.WriteLine("CD+EG detected.");
+                            StandardRW = true;
+                        }
+
+                        if((sectorBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_Line_Graphics ||
+                            (sectorBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_Line_Graphics ||
+                            (sectorBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_Line_Graphics ||
+                            (sectorBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_Line_Graphics)
+                        {
+                            Console.WriteLine("CD with Line Graphics detected.");
+                            StandardRW = true;
+                        }
+
+                        if((sectorBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_MIDI ||
+                            (sectorBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_MIDI ||
+                            (sectorBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_MIDI ||
+                            (sectorBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_MIDI)
+                        {
+                            Console.WriteLine("CD with Line Graphics detected.");
+                            StandardRW = true;
+                        }
+
+                        if((sectorBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_User ||
+                            (sectorBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_User ||
+                            (sectorBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_User ||
+                            (sectorBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_User)
+                        {
+                            Console.WriteLine("CD with Line Graphics detected.");
                             StandardRW = true;
                         }
 
@@ -348,12 +456,48 @@ namespace SubChannelDecoder
                     {
                         byte[] interBytes = InterleaveSubchannel(sub);
 
-                        if((interBytes[0] & 0x3F) == 0x09 ||
-                            (interBytes[24] & 0x3F) == 0x09 ||
-                            (interBytes[48] & 0x3F) == 0x09 ||
-                            (interBytes[72] & 0x3F) == 0x09)
+                        if((interBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_G ||
+                            (interBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_G ||
+                            (interBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_G ||
+                            (interBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_G)
                         {
                             Console.WriteLine("CD+G detected.");
+                            StandardRW = true;
+                        }
+
+                        if((interBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_EG ||
+                            (interBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_EG ||
+                            (interBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_EG ||
+                            (interBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_EG)
+                        {
+                            Console.WriteLine("CD+EG detected.");
+                            StandardRW = true;
+                        }
+
+                        if((interBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_Line_Graphics ||
+                            (interBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_Line_Graphics ||
+                            (interBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_Line_Graphics ||
+                            (interBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_Line_Graphics)
+                        {
+                            Console.WriteLine("CD with Line Graphics detected.");
+                            StandardRW = true;
+                        }
+
+                        if((interBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_MIDI ||
+                            (interBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_MIDI ||
+                            (interBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_MIDI ||
+                            (interBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_MIDI)
+                        {
+                            Console.WriteLine("CD with Line Graphics detected.");
+                            StandardRW = true;
+                        }
+
+                        if((interBytes[0] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_User ||
+                            (interBytes[24] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_User ||
+                            (interBytes[48] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_User ||
+                            (interBytes[72] & 0x3F) == (int)CD_RW_Subchannel.CD_RW_Commands.CD_User)
+                        {
+                            Console.WriteLine("CD with Line Graphics detected.");
                             StandardRW = true;
                         }
 
@@ -384,7 +528,7 @@ namespace SubChannelDecoder
                     }
 
                     if(correctlyPacketized)
-                        CD_G.PrintCDGPackets(ms.ToArray());
+                        CD_RW_Subchannel.Print_CD_RW_Packets(ms.ToArray());
                 }
             }
             catch
