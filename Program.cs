@@ -32,6 +32,7 @@ namespace SubChannelDecoder
         const int QData = 0x40;
         const int QCopyPermitted = 0x20;
         const int QPreEmphasis = 0x10;
+        const int QMode0 = 0x00;
         const int QMode1 = 0x01;
         const int QMode2 = 0x02;
         const int QMode3 = 0x03;
@@ -145,6 +146,10 @@ namespace SubChannelDecoder
 
                         PrintQSubchannel(sub.q);
 
+                        bool StandardRW = false;
+                        bool correctlyPacketized = false;
+                        MemoryStream ms = new MemoryStream();
+
                         if(interleaved == true || interleaved == null)
                         {
                             if((sectorBytes[0] & 0x3F) == 0x09 ||
@@ -153,7 +158,32 @@ namespace SubChannelDecoder
                                 (sectorBytes[72] & 0x3F) == 0x09)
                             {
                                 Console.WriteLine("CD+G detected.");
-                                CD_G.PrintCDGPackets(sectorBytes);
+                                StandardRW = true;
+                            }
+
+                            if(StandardRW)
+                            {
+                                if((fs.Length / 96) >= (sector+2))
+                                {
+                                    try
+                                    {
+                                        ms.Write(sectorBytes, 0, 96);
+
+                                        fs.Seek((sector+1)*96, SeekOrigin.Begin);
+                                        fs.Read(sectorBytes, 0, 96);
+                                        ms.Write(sectorBytes, 0, 96);
+
+                                        fs.Seek((sector+2)*96, SeekOrigin.Begin);
+                                        fs.Read(sectorBytes, 0, 96);
+                                        ms.Write(sectorBytes, 0, 96);
+
+                                        correctlyPacketized = true;
+                                    }
+                                    catch
+                                    {
+                                        correctlyPacketized = false;
+                                    }
+                                }
                             }
                         }
                         else
@@ -166,9 +196,37 @@ namespace SubChannelDecoder
                                 (interBytes[72] & 0x3F) == 0x09)
                             {
                                 Console.WriteLine("CD+G detected.");
-                                CD_G.PrintCDGPackets(interBytes);
+                                StandardRW = true;
+                            }
+
+                            if(StandardRW)
+                            {
+                                if((fs.Length / 96) >= (sector+2))
+                                {
+                                    try
+                                    {
+                                        ms.Write(interBytes, 0, 96);
+
+                                        fs.Seek((sector+1)*96, SeekOrigin.Begin);
+                                        fs.Read(sectorBytes, 0, 96);
+                                        ms.Write(InterleaveSubchannel(UnpackSubchannel(sectorBytes)), 0, 96);
+
+                                        fs.Seek((sector+2)*96, SeekOrigin.Begin);
+                                        fs.Read(sectorBytes, 0, 96);
+                                        ms.Write(InterleaveSubchannel(UnpackSubchannel(sectorBytes)), 0, 96);
+
+                                        correctlyPacketized = true;
+                                    }
+                                    catch
+                                    {
+                                        correctlyPacketized = false;
+                                    }
+                                }
                             }
                         }
+
+                        if(correctlyPacketized)
+                            CD_G.PrintCDGPackets(ms.ToArray());
                     }
                 }
                 else
@@ -246,6 +304,10 @@ namespace SubChannelDecoder
 
                     PrintQSubchannel(sub.q);
 
+                    bool StandardRW = false;
+                    bool correctlyPacketized = false;
+                    MemoryStream ms = new MemoryStream();
+
                     if(interleaved == true || interleaved == null)
                     {
                         if((sectorBytes[0] & 0x3F) == 0x09 ||
@@ -254,6 +316,32 @@ namespace SubChannelDecoder
                             (sectorBytes[72] & 0x3F) == 0x09)
                         {
                             Console.WriteLine("CD+G detected.");
+                            StandardRW = true;
+                        }
+
+                        if(StandardRW)
+                        {
+                            if((fs.Length / 96) >= (sector+2))
+                            {
+                                try
+                                {
+                                    ms.Write(sectorBytes, 0, 96);
+
+                                    fs.Seek((sector+1)*96, SeekOrigin.Begin);
+                                    fs.Read(sectorBytes, 0, 96);
+                                    ms.Write(sectorBytes, 0, 96);
+
+                                    fs.Seek((sector+2)*96, SeekOrigin.Begin);
+                                    fs.Read(sectorBytes, 0, 96);
+                                    ms.Write(sectorBytes, 0, 96);
+
+                                    correctlyPacketized = true;
+                                }
+                                catch
+                                {
+                                    correctlyPacketized = false;
+                                }
+                            }
                         }
                     }
                     else
@@ -266,8 +354,37 @@ namespace SubChannelDecoder
                             (interBytes[72] & 0x3F) == 0x09)
                         {
                             Console.WriteLine("CD+G detected.");
+                            StandardRW = true;
+                        }
+
+                        if(StandardRW)
+                        {
+                            if((fs.Length / 96) >= (sector+2))
+                            {
+                                try
+                                {
+                                    ms.Write(interBytes, 0, 96);
+
+                                    fs.Seek((sector+1)*96, SeekOrigin.Begin);
+                                    fs.Read(sectorBytes, 0, 96);
+                                    ms.Write(InterleaveSubchannel(UnpackSubchannel(sectorBytes)), 0, 96);
+
+                                    fs.Seek((sector+2)*96, SeekOrigin.Begin);
+                                    fs.Read(sectorBytes, 0, 96);
+                                    ms.Write(InterleaveSubchannel(UnpackSubchannel(sectorBytes)), 0, 96);
+
+                                    correctlyPacketized = true;
+                                }
+                                catch
+                                {
+                                    correctlyPacketized = false;
+                                }
+                            }
                         }
                     }
+
+                    if(correctlyPacketized)
+                        CD_G.PrintCDGPackets(ms.ToArray());
                 }
             }
             catch
@@ -299,6 +416,10 @@ namespace SubChannelDecoder
             if ((q[0] & QCopyPermitted) == QCopyPermitted)
                 Console.WriteLine("Track may be copied");
 
+            else if ((q[0] & 0x0F) == QMode0)
+            {
+                Console.WriteLine("Q Mode 0: Empty");
+            }
             if ((q[0] & 0x0F) == QMode1)
             {
                 int hour = 0;

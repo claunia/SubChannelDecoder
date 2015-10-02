@@ -26,7 +26,7 @@ namespace SubChannelDecoder
 {
     public static class CD_G
     {
-        public struct CD_G_Packet
+        public struct CD_RW_Packet
         {
             public byte command;
             public byte instruction;
@@ -50,9 +50,25 @@ namespace SubChannelDecoder
 
         public const byte CD_G_Command = 0x09;
 
-        public static CD_G_Packet[] Packetize_CDG(byte[] subchannel)
+        static readonly int[] offsets = new []
+        { 0, 66, 125, 191, 100, 50, 150, 175,
+            8, 33, 58, 83, 108, 133, 158, 183,
+            16, 41, 25, 91, 116, 141, 166, 75
+        };
+
+        public static CD_RW_Packet[] Packetize_CD_RW(byte[] subchannels)
         {
-            CD_G_Packet[] packets = new CD_G_Packet[4];
+            Console.WriteLine("{0}", subchannels.Length);
+            CD_RW_Packet[] packets = new CD_RW_Packet[4];
+
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+
+            for (int pack = 0; pack < 4; pack++)
+                for (int column = 0; column < 24; column++)
+                    ms.WriteByte(subchannels[(pack*24)+offsets[column]]);
+
+            ms.Seek(0, System.IO.SeekOrigin.Begin);
+            byte[] packetized = ms.ToArray();
 
             for (int i = 0; i < 4; i++)
             {
@@ -60,31 +76,31 @@ namespace SubChannelDecoder
                 packets[i].data = new byte[16];
                 packets[i].parityP = new byte[4];
 
-                packets[i].command = (byte)(subchannel[0 + i * 24] & 0x3F);
-                packets[i].instruction = (byte)(subchannel[1 + i * 24] & 0x3F);
+                packets[i].command = (byte)(packetized[0 + i * 24] & 0x3F);
+                packets[i].instruction = (byte)(packetized[1 + i * 24] & 0x3F);
 
-                packets[i].parityQ[0] = (byte)(subchannel[2 + i * 24] & 0x3F);
-                packets[i].parityQ[1] = (byte)(subchannel[3 + i * 24] & 0x3F);
-                packets[i].data[0] = (byte)(subchannel[4 + i * 24] & 0x3F);
-                packets[i].data[1] = (byte)(subchannel[5 + i * 24] & 0x3F);
-                packets[i].data[2] = (byte)(subchannel[6 + i * 24] & 0x3F);
-                packets[i].data[3] = (byte)(subchannel[7 + i * 24] & 0x3F);
-                packets[i].data[4] = (byte)(subchannel[8 + i * 24] & 0x3F);
-                packets[i].data[5] = (byte)(subchannel[9 + i * 24] & 0x3F);
-                packets[i].data[6] = (byte)(subchannel[10 + i * 24] & 0x3F);
-                packets[i].data[7] = (byte)(subchannel[11 + i * 24] & 0x3F);
-                packets[i].data[8] = (byte)(subchannel[12 + i * 24] & 0x3F);
-                packets[i].data[9] = (byte)(subchannel[13 + i * 24] & 0x3F);
-                packets[i].data[10] = (byte)(subchannel[14 + i * 24] & 0x3F);
-                packets[i].data[11] = (byte)(subchannel[15 + i * 24] & 0x3F);
-                packets[i].data[12] = (byte)(subchannel[16 + i * 24] & 0x3F);
-                packets[i].data[13] = (byte)(subchannel[17 + i * 24] & 0x3F);
-                packets[i].data[14] = (byte)(subchannel[18 + i * 24] & 0x3F);
-                packets[i].data[15] = (byte)(subchannel[19 + i * 24] & 0x3F);
-                packets[i].parityP[0] = (byte)(subchannel[20 + i * 24] & 0x3F);
-                packets[i].parityP[1] = (byte)(subchannel[21 + i * 24] & 0x3F);
-                packets[i].parityP[2] = (byte)(subchannel[22 + i * 24] & 0x3F);
-                packets[i].parityP[3] = (byte)(subchannel[23 + i * 24] & 0x3F);
+                packets[i].parityQ[0] = (byte)(packetized[2 + i * 24] & 0x3F);
+                packets[i].parityQ[1] = (byte)(packetized[3 + i * 24] & 0x3F);
+                packets[i].data[0] = (byte)(packetized[4 + i * 24] & 0x3F);
+                packets[i].data[1] = (byte)(packetized[5 + i * 24] & 0x3F);
+                packets[i].data[2] = (byte)(packetized[6 + i * 24] & 0x3F);
+                packets[i].data[3] = (byte)(packetized[7 + i * 24] & 0x3F);
+                packets[i].data[4] = (byte)(packetized[8 + i * 24] & 0x3F);
+                packets[i].data[5] = (byte)(packetized[9 + i * 24] & 0x3F);
+                packets[i].data[6] = (byte)(packetized[10 + i * 24] & 0x3F);
+                packets[i].data[7] = (byte)(packetized[11 + i * 24] & 0x3F);
+                packets[i].data[8] = (byte)(packetized[12 + i * 24] & 0x3F);
+                packets[i].data[9] = (byte)(packetized[13 + i * 24] & 0x3F);
+                packets[i].data[10] = (byte)(packetized[14 + i * 24] & 0x3F);
+                packets[i].data[11] = (byte)(packetized[15 + i * 24] & 0x3F);
+                packets[i].data[12] = (byte)(packetized[16 + i * 24] & 0x3F);
+                packets[i].data[13] = (byte)(packetized[17 + i * 24] & 0x3F);
+                packets[i].data[14] = (byte)(packetized[18 + i * 24] & 0x3F);
+                packets[i].data[15] = (byte)(packetized[19 + i * 24] & 0x3F);
+                packets[i].parityP[0] = (byte)(packetized[20 + i * 24] & 0x3F);
+                packets[i].parityP[1] = (byte)(packetized[21 + i * 24] & 0x3F);
+                packets[i].parityP[2] = (byte)(packetized[22 + i * 24] & 0x3F);
+                packets[i].parityP[3] = (byte)(packetized[23 + i * 24] & 0x3F);
             }
 
             return packets;
@@ -92,10 +108,10 @@ namespace SubChannelDecoder
 
         public static void PrintCDGPackets(byte[] subchannel)
         {
-            PrintCDGPackets(Packetize_CDG(subchannel));
+            PrintCDGPackets(Packetize_CD_RW(subchannel));
         }
 
-        public static void PrintCDGPackets(CD_G_Packet[] packets)
+        public static void PrintCDGPackets(CD_RW_Packet[] packets)
         {
             for (int i = 0; i < packets.Length; i++)
             {
@@ -104,7 +120,7 @@ namespace SubChannelDecoder
             }
         }
 
-        public static void PrintCDGPacket(CD_G_Packet packet)
+        public static void PrintCDGPacket(CD_RW_Packet packet)
         {
             if (packet.command != CD_G_Command)
                 return;
