@@ -38,6 +38,7 @@
     <Compile Include="Subchannel.cs" />
     <Compile Include="CRC16CCITTContext.cs" />
     <Compile Include="BigEndianBitConverter.cs" />
+    <Compile Include="CD+G.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

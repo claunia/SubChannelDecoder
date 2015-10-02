@@ -60,7 +60,7 @@ namespace SubChannelDecoder
 
         public static void Main(string[] args)
         {
-            Console.WriteLine("SubChannelDecoder 0.03");
+            Console.WriteLine("SubChannelDecoder 0.04");
             Console.WriteLine("© 2015 Natalia Portillo");
             Console.WriteLine();
 
@@ -143,6 +143,31 @@ namespace SubChannelDecoder
                             sub.w[6], sub.w[7], sub.w[8], sub.w[9], sub.w[10], sub.w[11]);
 
                         PrintQSubchannel(sub.q);
+
+                        if(interleaved == true || interleaved == null)
+                        {
+                            if((sectorBytes[0] & 0x3F) == 0x09 ||
+                                (sectorBytes[24] & 0x3F) == 0x09 ||
+                                (sectorBytes[48] & 0x3F) == 0x09 ||
+                                (sectorBytes[72] & 0x3F) == 0x09)
+                            {
+                                Console.WriteLine("CD+G detected.");
+                                CD_G.PrintCDGPackets(sectorBytes);
+                            }
+                        }
+                        else
+                        {
+                            byte[] interBytes = InterleaveSubchannel(sub);
+
+                            if((interBytes[0] & 0x3F) == 0x09 ||
+                                (interBytes[24] & 0x3F) == 0x09 ||
+                                (interBytes[48] & 0x3F) == 0x09 ||
+                                (interBytes[72] & 0x3F) == 0x09)
+                            {
+                                Console.WriteLine("CD+G detected.");
+                                CD_G.PrintCDGPackets(interBytes);
+                            }
+                        }
                     }
                 }
                 else
@@ -219,6 +244,29 @@ namespace SubChannelDecoder
                         sub.w[6], sub.w[7], sub.w[8], sub.w[9], sub.w[10], sub.w[11]);
 
                     PrintQSubchannel(sub.q);
+
+                    if(interleaved == true || interleaved == null)
+                    {
+                        if((sectorBytes[0] & 0x3F) == 0x09 ||
+                            (sectorBytes[24] & 0x3F) == 0x09 ||
+                            (sectorBytes[48] & 0x3F) == 0x09 ||
+                            (sectorBytes[72] & 0x3F) == 0x09)
+                        {
+                            Console.WriteLine("CD+G detected.");
+                        }
+                    }
+                    else
+                    {
+                        byte[] interBytes = InterleaveSubchannel(sub);
+
+                        if((interBytes[0] & 0x3F) == 0x09 ||
+                            (interBytes[24] & 0x3F) == 0x09 ||
+                            (interBytes[48] & 0x3F) == 0x09 ||
+                            (interBytes[72] & 0x3F) == 0x09)
+                        {
+                            Console.WriteLine("CD+G detected.");
+                        }
+                    }
                 }
             }
             catch
@@ -235,6 +283,8 @@ namespace SubChannelDecoder
                 Console.WriteLine("Sector is part of a data track");
                 if ((q[0] & QPreEmphasis) == QPreEmphasis)
                     Console.WriteLine("Track has been recorded incrementally");
+                if ((q[0] & QQuadraphonic) == QQuadraphonic)
+                    Console.WriteLine("Track is for broadcsting use");
             }
             else
             {

@@ -1,3 +1,10 @@
+2015-10-02  Natalia Portillo  <claunia@claunia.com>
+
+	* CD+G.cs:
+	* Program.cs:
+	* SubChannelDecoder.csproj:
+	  Added CD+G support.
+
 2015-10-01  Natalia Portillo  <claunia@claunia.com>
 
 	* Program.cs:
