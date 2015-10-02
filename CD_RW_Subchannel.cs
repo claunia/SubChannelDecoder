@@ -1,5 +1,5 @@
 ﻿//
-//  CD+G.cs
+//  CD_RW_Subchannel.cs
 //
 //  Author:
 //       Natalia Portillo <claunia@claunia.com>
